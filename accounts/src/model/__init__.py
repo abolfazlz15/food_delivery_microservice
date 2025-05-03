@@ -1,4 +1,4 @@
 from .user import User
-from .token import AuthToken
+from .auth_token import AuthToken
 
 __all__ = ["User", "AuthToken"]
