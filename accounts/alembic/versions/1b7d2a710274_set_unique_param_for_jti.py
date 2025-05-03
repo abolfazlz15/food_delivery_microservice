@@ -1,8 +1,8 @@
-"""add auth token model
+"""set unique param for jti
 
-Revision ID: f4a295c427a2
+Revision ID: 1b7d2a710274
 Revises: d38daabd41ec
-Create Date: 2025-05-03 13:06:33.023120
+Create Date: 2025-05-03 17:28:44.631713
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f4a295c427a2'
+revision: str = '1b7d2a710274'
 down_revision: Union[str, None] = 'd38daabd41ec'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -29,7 +29,7 @@ def upgrade() -> None:
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_auth_tokens_jti'), 'auth_tokens', ['jti'], unique=False)
+    op.create_index(op.f('ix_auth_tokens_jti'), 'auth_tokens', ['jti'], unique=True)
     # ### end Alembic commands ###
 
 

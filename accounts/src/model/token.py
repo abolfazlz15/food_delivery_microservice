@@ -22,5 +22,6 @@ class AuthToken(BaseModel, Base):
         PG_UUID(as_uuid=True),
         index=True,
         default=uuid.uuid4,
+        unique=True,
     )
     user_id: Mapped[int]
