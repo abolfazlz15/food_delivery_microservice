@@ -20,3 +20,11 @@ class AuthTokenRepository:
         ):
             return auth_token_obj
         return None
+
+    async def create_token(self, jti: UUID, user_id: int) -> AuthToken:
+        auth_token_obj = AuthToken(
+            user_id=user_id,
+            jti=jti,
+        )
+        self.session.add(auth_token_obj)
+        await self.session.commit()
