@@ -318,4 +318,7 @@ pip-selfcheck.json
 .history
 .ionide
 
+
+# custom ignore files
+my_task.txt
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,pycharm,venv

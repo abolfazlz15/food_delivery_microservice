@@ -15,11 +15,11 @@ class Settings(BaseSettings):
     database_url: Optional[str] = None
 
     # JWT Config
-    # secret_key: str
-    # algorithm: str = "HS256"
-    # access_token_lifetime: int = 3600  # seconds
-    # refresh_token_lifetime: int = 20  # 20 days
-    # reset_pass_access_token_lifetime: int = 10 * 60  # minutes
+    secret_key: str
+    algorithm: str = "HS256"
+    access_token_lifetime: int = 3600  # seconds
+    refresh_token_lifetime: int = 20  # 20 days
+    reset_pass_access_token_lifetime: int = 10 * 60  # minutes
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

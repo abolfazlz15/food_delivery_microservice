@@ -12,7 +12,7 @@ class UserProfileDetailSchema(BaseModel):
 class UserFullDataSchema(UserProfileDetailSchema):
     is_active: bool
     created_at: datetime
-    updated_at: datetime
+    updated_at: datetime | None
 
 
 class UserInDBSchema(UserFullDataSchema):

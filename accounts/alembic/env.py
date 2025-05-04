@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 
 from src.config.database import Base
-from src.model import *
+from src.model import * # noqa
 
 load_dotenv()
 
