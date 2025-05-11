@@ -31,6 +31,7 @@ async def authenticate_user(
         created_at=user_dict.created_at,
         updated_at=user_dict.updated_at,
         password=user_dict.password,
+        role=user_dict.role,
     )
     if not verify_password(password, user.password):
         return None

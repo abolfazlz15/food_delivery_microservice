@@ -13,7 +13,7 @@ class UserFullDataSchema(UserProfileDetailSchema):
     is_active: bool
     created_at: datetime
     updated_at: datetime | None
-
+    role: str
 
 class UserInDBSchema(UserFullDataSchema):
     password: str

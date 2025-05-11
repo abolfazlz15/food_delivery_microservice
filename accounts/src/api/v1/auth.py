@@ -41,7 +41,7 @@ async def login_router(
     )
     refresh_token = await AuthTokenService.create_refresh_token(
         session=db,
-        data={"sub": str(user.id)},
+        data={"sub": str(user.id), "user_role": user.role},
         expires_delta=timedelta(days=settings.refresh_token_lifetime),
     )
     return TokenSchema(
