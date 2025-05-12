@@ -15,5 +15,6 @@ class UserFullDataSchema(UserProfileDetailSchema):
     updated_at: datetime | None
     role: str
 
+
 class UserInDBSchema(UserFullDataSchema):
     password: str

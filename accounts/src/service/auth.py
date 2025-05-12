@@ -71,7 +71,7 @@ async def get_current_user(
 
     except (jwt.InvalidTokenError, jwt.ExpiredSignatureError):
         raise credentials_exception
-    user_dict = await UserRepository(session).get_all_user_data_by_id(id=user_id)
+    user_dict = await UserRepository(session).get_all_user_data_by_id(id=int(user_id))
     user = UserInDBSchema(
         id=user_dict.id,
         fullname=user_dict.fullname,
@@ -80,6 +80,7 @@ async def get_current_user(
         created_at=user_dict.created_at,
         updated_at=user_dict.updated_at,
         password=user_dict.password,
+        role=user_dict.role,
     )
     if user is None:
         raise credentials_exception

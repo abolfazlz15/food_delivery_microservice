@@ -16,6 +16,7 @@ class UserRepository:
         return None
 
     async def get_all_user_data_by_id(self, id: int) -> User | None:
+        print("id+++++++++++++++++", type(id))
         if result := await self.session.scalar(sa.select(User).where(User.id == id)):
             return result
         return None
