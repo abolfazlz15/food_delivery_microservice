@@ -18,3 +18,8 @@ class UserFullDataSchema(UserProfileDetailSchema):
 
 class UserInDBSchema(UserFullDataSchema):
     password: str
+
+
+class UserUpdateProfileInDBSchema(BaseModel):
+    fullname: str
+    
