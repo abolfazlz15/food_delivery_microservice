@@ -1,13 +1,13 @@
 from sqlalchemy import Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from notification.src.common.enum.notification_type_enum import NotificationTypeEnum
+from src.common.enum.notification_type_enum import NotificationTypeEnum
 from src.config.database import Base
 from src.model.base_model import BaseModel
 
 
-class NotificationReport(BaseModel, Base):
-    __tablename__ = "users"
+class Notification(BaseModel, Base):
+    __tablename__ = "notifications"
 
     id: Mapped[int] = mapped_column(
         primary_key=True,
