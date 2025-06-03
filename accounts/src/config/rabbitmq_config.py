@@ -1,8 +1,10 @@
 import aio_pika
 from aio_pika.abc import AbstractChannel
 
+
 class RabbitMQManager:
     """Manages RabbitMQ connections and channels for publishing messages."""
+
     def __init__(self, url: str):
         self.url = url
         self.connection: aio_pika.RobustConnection | None = None
@@ -16,11 +18,13 @@ class RabbitMQManager:
         return self.channel
 
     async def publish(self, queue_name: str, message_body: bytes):
-        """Publish a message to the specified queue."""
+        """Ensure queue exists and publish a message."""
         channel = await self.connect()
+        await channel.declare_queue(queue_name, durable=True)
+
         await channel.default_exchange.publish(
             aio_pika.Message(body=message_body),
-            routing_key=queue_name
+            routing_key=queue_name,
         )
 
     async def close(self):
