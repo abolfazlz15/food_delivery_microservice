@@ -10,8 +10,8 @@ class RabbitMQManager:
         self.connection: aio_pika.RobustConnection | None = None
         self.channel: AbstractChannel | None = None
 
-    async def connect(self) -> AbstractChannel:
-        """Establish a connection to RabbitMQ and return the channel."""
+    async def ensure_connection(self):
+        """Ensure the connection and channel are ready."""
         if not self.connection or self.connection.is_closed:
             self.connection = await aio_pika.connect_robust(self.url)
             self.channel = await self.connection.channel()
@@ -19,22 +19,15 @@ class RabbitMQManager:
 
     async def publish(self, queue_name: str, message_body: bytes):
         """Ensure queue exists and publish a message."""
-        channel = await self.connect()
-        await channel.declare_queue(queue_name, durable=True)
 
-        await channel.default_exchange.publish(
+        await self.channel.declare_queue(queue_name, durable=True)
+
+        await self.channel.default_exchange.publish(
             aio_pika.Message(body=message_body),
             routing_key=queue_name,
         )
 
-    async def close(self):
+    async def close_connection(self):
         """Close the connection to RabbitMQ."""
         if self.connection and not self.connection.is_closed:
             await self.connection.close()
-
-    async def __aenter__(self):
-        await self.connect()
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close()
