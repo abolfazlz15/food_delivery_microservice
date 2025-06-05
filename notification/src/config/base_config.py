@@ -20,12 +20,24 @@ class Settings(BaseSettings):
     # access_token_lifetime: int = 3600  # seconds
     # refresh_token_lifetime: int = 20  # 20 days
     # reset_pass_access_token_lifetime: int = 10 * 60  # minutes
+    
+    # RabbitMQ Config
+    rabbitmq_host: str
+    rabbitmq_port: int = 5672
+    rabbitmq_user: str
+    rabbitmq_password: str
+    rabbitmq_vhost: str = "/"
+    rabbitmq_url: Optional[str] = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.database_url = (
             f"postgresql+asyncpg://{self.database_username}:{self.database_password}"
             f"@{self.database_hostname}/{self.database_name}"
+        )
+        self.rabbitmq_url = (
+            f"amqp://{self.rabbitmq_user}:{self.rabbitmq_password}"
+            f"@{self.rabbitmq_host}:{self.rabbitmq_port}{self.rabbitmq_vhost}"
         )
 
     class Config:
