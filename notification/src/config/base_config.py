@@ -20,7 +20,13 @@ class Settings(BaseSettings):
     # access_token_lifetime: int = 3600  # seconds
     # refresh_token_lifetime: int = 20  # 20 days
     # reset_pass_access_token_lifetime: int = 10 * 60  # minutes
-    
+
+    smtp_host: str
+    smtp_port: int
+    smtp_username: str
+    smtp_password: str
+    from_email: str
+
     # RabbitMQ Config
     rabbitmq_host: str
     rabbitmq_port: int = 5672
