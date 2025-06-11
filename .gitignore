@@ -321,4 +321,5 @@ pip-selfcheck.json
 
 # custom ignore files
 my_task.txt
+accounts.code-workspace
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,pycharm,venv
