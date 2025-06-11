@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     database_username: str
     database_password: str
     database_name: str
-    database_url: Optional[str] = None
+    database_url: str
 
     # JWT Config
     # secret_key: str
