@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
-from src.schema.user import UserUpdateProfileInDBSchema
+
 from src.model.user import User
+from src.schema.user import UserUpdateProfileInDBSchema
+
 
 class UserRepositoryInterface(ABC):
     @abstractmethod
@@ -12,5 +14,7 @@ class UserRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def update_user(self, user_id: int, **user_data: UserUpdateProfileInDBSchema) -> User | None:
+    async def update_user(
+        self, user_id: int, **user_data: UserUpdateProfileInDBSchema
+    ) -> User | None:
         pass
