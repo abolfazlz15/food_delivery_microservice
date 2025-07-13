@@ -1,9 +1,12 @@
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.model.user import User
+from src.repository_interface.user_repository_interface import UserRepositoryInterface
+from src.schema.user import UserUpdateProfileInDBSchema
 
 
-class UserRepository:
+class UserRepository(UserRepositoryInterface):
     def __init__(self, session: AsyncSession):
         self.session = session
 
@@ -15,7 +18,7 @@ class UserRepository:
             return result
         return None
 
-    async def get_all_user_data_by_id(self, id: int) -> User | None:
+    async def get_user_detail_by_id(self, id: int) -> User | None:
         if result := await self.session.scalar(sa.select(User).where(User.id == id)):
             return result
         return None

@@ -12,7 +12,7 @@ class Base(DeclarativeBase):
 
 
 engine = create_async_engine(
-    settings.database_url, # type: ignore
+    settings.database_url,  # type: ignore
     echo=True,
 )
 
