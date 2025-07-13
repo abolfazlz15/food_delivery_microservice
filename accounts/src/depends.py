@@ -5,8 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config.database import get_db
 from src.repository.user import UserRepository
-from src.repository_interface.user_repository_interface import \
-    UserRepositoryInterface
+from src.repository_interface.user_repository_interface import UserRepositoryInterface
 
 
 def get_user_repository(
