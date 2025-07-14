@@ -1,6 +1,10 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.service.user import change_password
+
+from src.depends import get_user_repository
+from src.repository_interface.user_repository_interface import UserRepositoryInterface
 from src.config.database import get_db
 from src.repository.user import UserRepository
 from src.schema.user import (
@@ -10,7 +14,7 @@ from src.schema.user import (
     UserUpdateProfileInDBSchema,
 )
 from src.service.auth import get_current_active_user
-
+from src.service.user import UserService, change_password
 
 router = APIRouter(
     prefix="/user",
@@ -25,17 +29,10 @@ router = APIRouter(
     name="user:detail",
 )
 async def user_detail_router(
+    user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
     current_user: UserInDBSchema = Depends(get_current_active_user),
 ):
-    return UserFullDataSchema(
-        id=current_user.id,
-        fullname=current_user.fullname,
-        email=current_user.email,
-        is_active=current_user.is_active,
-        created_at=current_user.created_at,
-        updated_at=current_user.updated_at,
-        role=current_user.role,
-    )
+    return UserService(user_repository).user_detail(current_user)
 
 
 @router.patch(

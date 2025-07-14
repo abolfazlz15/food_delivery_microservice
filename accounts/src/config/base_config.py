@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     rabbitmq_user: str
     rabbitmq_password: str
     rabbitmq_vhost: str = "/"
-    rabbitmq_url: str
+    rabbitmq_url: str | None = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
