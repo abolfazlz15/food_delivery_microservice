@@ -1,4 +1,4 @@
-from src.config.base_config import Settings
+from src.config.base_config import settings
 from src.config.rabbitmq_config import RabbitMQManager
 from src.schema.notification_schema import NotificationOTPSchema
 
@@ -7,7 +7,7 @@ class NotificationService:
     """Service for sending data to notification service."""
 
     def __init__(self):
-        self.__rabbitmq_manager = RabbitMQManager(Settings().rabbitmq_url)
+        self.__rabbitmq_manager = RabbitMQManager(settings.rabbitmq_url)
 
     async def send_otp(self, message_body: NotificationOTPSchema) -> None:
         """Send OTP to the user's email."""

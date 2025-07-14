@@ -5,14 +5,14 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.config.base_config import Settings
+
+from src.config.base_config import settings
 from src.config.database import get_db
 from src.repository.user import UserRepository
 from src.schema.user import UserFullDataSchema, UserInDBSchema
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
-settings = Settings()
 
 
 async def authenticate_user(

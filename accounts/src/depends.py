@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.config.database import get_db
 from src.repository.auth_token import AuthTokenRepository
 from src.repository.user import UserRepository
-from src.repository_interface.auth_token_repository_interface import \
-    AuthTokenRepositoryInterface
-from src.repository_interface.user_repository_interface import \
-    UserRepositoryInterface
+from src.repository_interface.auth_token_repository_interface import (
+    AuthTokenRepositoryInterface,
+)
+from src.repository_interface.user_repository_interface import UserRepositoryInterface
 
 
 def get_user_repository(

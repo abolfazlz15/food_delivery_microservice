@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.service.user import change_password
-from src.config.base_config import Settings
 from src.config.database import get_db
 from src.repository.user import UserRepository
 from src.schema.user import (
@@ -12,7 +11,6 @@ from src.schema.user import (
 )
 from src.service.auth import get_current_active_user
 
-settings = Settings()
 
 router = APIRouter(
     prefix="/user",

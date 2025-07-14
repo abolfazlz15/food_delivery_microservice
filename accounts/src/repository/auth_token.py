@@ -2,10 +2,14 @@ from uuid import UUID
 
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.model.auth_token import AuthToken
+from src.repository_interface.auth_token_repository_interface import (
+    AuthTokenRepositoryInterface,
+)
 
 
-class AuthTokenRepository:
+class AuthTokenRepository(AuthTokenRepositoryInterface):
     def __init__(self, session: AsyncSession):
         self.session = session
 
@@ -28,3 +32,4 @@ class AuthTokenRepository:
         )
         self.session.add(auth_token_obj)
         await self.session.commit()
+        return auth_token_obj

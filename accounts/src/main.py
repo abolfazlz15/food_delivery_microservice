@@ -1,12 +1,13 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from src.config.base_config import Settings
-from src.config.rabbitmq_config import RabbitMQManager
 from src.api.v1.auth import router as auth_router
 from src.api.v1.user import router as user_router
+from src.config.base_config import settings
+from src.config.rabbitmq_config import RabbitMQManager
 
-rabbitmq_manager = RabbitMQManager(Settings().rabbitmq_url)
+rabbitmq_manager = RabbitMQManager(settings.rabbitmq_url)
 
 
 @asynccontextmanager

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic_settings import BaseSettings
 
 
@@ -12,7 +10,7 @@ class Settings(BaseSettings):
     database_username: str
     database_password: str
     database_name: str
-    database_url: Optional[str] = None
+    database_url: str
 
     # JWT Config
     secret_key: str
@@ -27,7 +25,7 @@ class Settings(BaseSettings):
     rabbitmq_user: str
     rabbitmq_password: str
     rabbitmq_vhost: str = "/"
-    rabbitmq_url: Optional[str] = None
+    rabbitmq_url: str
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -42,3 +40,6 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+
+
+settings: Settings = Settings()
