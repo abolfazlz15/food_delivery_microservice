@@ -2,6 +2,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from src.common.exceptions.exception_handler import handle_app_exception
+from src.common.exceptions.exceptions import AppBaseException
 from src.api.v1.auth import router as auth_router
 from src.api.v1.user import router as user_router
 from src.config.base_config import settings
@@ -18,6 +20,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.add_exception_handler(AppBaseException, handle_app_exception)  # type: ignore
+
 
 app.include_router(auth_router, tags=["auth"])
 app.include_router(user_router, tags=["user"])
