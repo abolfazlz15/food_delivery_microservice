@@ -1,5 +1,6 @@
 from enum import StrEnum
 
+
 class ErrorCodes(StrEnum):
     DUPLICATE_ENTRY = "DUPLICATE_ENTRY"
     ENTITY_NOT_FOUND = "ENTITY_NOT_FOUND"

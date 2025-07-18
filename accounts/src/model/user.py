@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from src.common.enum.user_role_enum import UserRoleEnum
+from src.common.enum.user_role import UserRoleEnum
 from src.config.database import Base
 from src.model.base_model import BaseModel
 

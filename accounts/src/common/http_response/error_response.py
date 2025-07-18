@@ -5,6 +5,5 @@ from src.common.http_response.base_response import BaseResponse
 
 
 class ErrorResponse(BaseResponse):
-
     code: ErrorCodes
     data: dict[str, Any] | None = None
