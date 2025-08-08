@@ -1,6 +1,23 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, EmailStr
+
+
+class UserBaseSchema(BaseModel):
+    fullname: str = Field(max_length=255, description="client full name")
+    email: EmailStr = Field(description="client unique email address")
+
+
+class UserUpdateSchema(BaseModel):
+    fullname: str | None = Field(
+        default=None, max_length=255, description="update client full name",
+    )
+    email: EmailStr | None = Field(
+        default=None, description="update client unique email address",
+    )
+    password: str | None = Field(
+        None, min_length=8, description="updated user password",
+    )
 
 
 class UserProfileDetailSchema(BaseModel):
