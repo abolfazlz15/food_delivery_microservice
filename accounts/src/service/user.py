@@ -1,27 +1,31 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from src.common.exceptions.exceptions import InvalidCredentialsException
+from src.common.security.password_hash import PasswordContext
 from src.repository_interface.user_repository_interface import UserRepositoryInterface
-from src.repository.user import UserRepository
-from src.schema.user import ChangePasswordInSchema, UserFullDataSchema, UserInDBSchema
+from src.schema.user import (
+    ChangePasswordInSchema,
+    UserFullDataSchema,
+    UserInDBSchema,
+    UserUpdateSchema,
+)
 from src.service.auth import get_password_hash, verify_password
 
 
-async def change_password(
-    user: UserInDBSchema,
-    password_data: ChangePasswordInSchema,
-    session: AsyncSession,
-) -> bool:
-    if not verify_password(password_data.current_password, user.password):
-        raise ValueError("Old password is incorrect")
+# async def change_password(
+#     user: UserInDBSchema,
+#     password_data: ChangePasswordInSchema,
+#     session: AsyncSession,
+# ) -> bool:
+#     if not verify_password(password_data.current_password, user.password):
+#         raise ValueError("Old password is incorrect")
 
-    hashed_new_password = get_password_hash(password_data.new_password)
-    updated_user = await UserRepository(
-        session,
-    ).update_user(
-        user.id,
-        password=hashed_new_password,
-    )
-    return bool(updated_user)
+#     hashed_new_password = get_password_hash(password_data.new_password)
+#     updated_user = await UserRepository(
+#         session,
+#     ).update_user(
+#         user.id,
+#         password=hashed_new_password,
+#     )
+#     return bool(updated_user)
 
 
 class UserService:
@@ -38,3 +42,21 @@ class UserService:
             updated_at=current_user.updated_at,
             role=current_user.role,
         )
+
+    async def change_password(
+        self,
+        user: UserInDBSchema,
+        password_data: ChangePasswordInSchema,
+    ):
+        if not PasswordContext.verify_password(
+            password_data.current_password, user.password
+        ):
+            raise InvalidCredentialsException(message="Password is wrong")
+
+        hashed_new_password = get_password_hash(password_data.new_password)
+
+        updated_user = await self.user_repository.update_user(
+            user_id=user.id, user_data=UserUpdateSchema(password=hashed_new_password)
+        )
+
+        return updated_user

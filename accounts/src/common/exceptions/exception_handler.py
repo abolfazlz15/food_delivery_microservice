@@ -1,10 +1,10 @@
 from fastapi import Request
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse
 
 from src.common.exceptions.exceptions import AppBaseException
 
 
-async def handle_app_exception(request: Request, exc: AppBaseException) -> Response:
+async def handle_app_exception(request: Request, exc: AppBaseException) -> JSONResponse:
     error_model = exc.to_response_model(path=request.url.path)
     return JSONResponse(
         status_code=exc.status_code,

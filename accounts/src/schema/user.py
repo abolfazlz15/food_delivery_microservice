@@ -10,13 +10,16 @@ class UserBaseSchema(BaseModel):
 
 class UserUpdateSchema(BaseModel):
     fullname: str | None = Field(
-        default=None, max_length=255, description="update client full name",
+        default=None,
+        max_length=255,
+        description="update client full name",
     )
     email: EmailStr | None = Field(
-        default=None, description="update client unique email address",
+        default=None,
+        description="update client unique email address",
     )
     password: str | None = Field(
-        None, min_length=8, description="updated user password",
+        None, min_length=8, description="update user password confirm"
     )
 
 
@@ -42,9 +45,13 @@ class UserUpdateProfileInDBSchema(BaseModel):
 
 
 class ChangePasswordInSchema(BaseModel):
-    current_password: str
-    new_password: str = Field(min_length=8)
-    new_password_confirm: str = Field(min_length=8)
+    current_password: str = Field(
+        description="current user password",
+    )
+    new_password: str = Field(min_length=8, description="new user password")
+    new_password_confirm: str = Field(
+        min_length=8, description="new user password confirm"
+    )
 
     @model_validator(mode="after")
     def validate_passwords(self):

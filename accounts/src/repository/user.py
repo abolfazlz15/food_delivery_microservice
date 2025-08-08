@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.model.user import User
 from src.repository_interface.user_repository_interface import UserRepositoryInterface
-from src.schema.user import UserUpdateProfileInDBSchema
+from src.schema.user import UserUpdateSchema
 
 
 class UserRepository(UserRepositoryInterface):
@@ -23,19 +23,18 @@ class UserRepository(UserRepositoryInterface):
             return result
         return None
 
-    async def update_user(self, user_id: int, **kwargs) -> User | None:
-        """
-        Update a user's fields.
+    async def update_user(
+        self, user_id: int, user_data: UserUpdateSchema
+    ) -> User | None:
 
-        Args:
-            user_id: ID of the user to update.
-            kwargs: Fields to update (e.g., fullname, email).
-
-        Returns:
-            The updated user object or None if the user doesn't exist.
-        """
+        update_data = user_data.model_dump(exclude_unset=True, exclude_none=True)
+        if not update_data:
+            return await self.get_user_detail_by_id(user_id)
         stmt = (
-            sa.update(User).where(User.id == user_id).values(**kwargs).returning(User)
+            sa.update(User)
+            .where(User.id == user_id)
+            .values(update_data)
+            .returning(User)
         )
         result = await self.session.execute(stmt)
         updated_user = result.scalar_one_or_none()
