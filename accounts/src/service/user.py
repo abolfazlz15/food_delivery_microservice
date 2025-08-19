@@ -1,31 +1,17 @@
-from src.common.exceptions.exceptions import InvalidCredentialsException
+from src.common.exceptions.exceptions import (
+    EntityNotFoundException,
+    InvalidCredentialsException,
+)
 from src.common.security.password_hash import PasswordContext
 from src.repository_interface.user_repository_interface import UserRepositoryInterface
 from src.schema.user import (
     ChangePasswordInSchema,
     UserFullDataSchema,
     UserInDBSchema,
+    UserReadSchema,
     UserUpdateSchema,
 )
-from src.service.auth import get_password_hash, verify_password
-
-
-# async def change_password(
-#     user: UserInDBSchema,
-#     password_data: ChangePasswordInSchema,
-#     session: AsyncSession,
-# ) -> bool:
-#     if not verify_password(password_data.current_password, user.password):
-#         raise ValueError("Old password is incorrect")
-
-#     hashed_new_password = get_password_hash(password_data.new_password)
-#     updated_user = await UserRepository(
-#         session,
-#     ).update_user(
-#         user.id,
-#         password=hashed_new_password,
-#     )
-#     return bool(updated_user)
+from src.service.auth import get_password_hash
 
 
 class UserService:
@@ -47,7 +33,7 @@ class UserService:
         self,
         user: UserInDBSchema,
         password_data: ChangePasswordInSchema,
-    ):
+    ) -> UserReadSchema:
         if not PasswordContext.verify_password(
             password_data.current_password, user.password
         ):
@@ -55,8 +41,12 @@ class UserService:
 
         hashed_new_password = get_password_hash(password_data.new_password)
 
-        updated_user = await self.user_repository.update_user(
-            user_id=user.id, user_data=UserUpdateSchema(password=hashed_new_password)
+        if user_obj := await self.user_repository.update_user(
+            user_id=user.id,
+            user_data=UserUpdateSchema(password=hashed_new_password),
+        ):
+            return UserReadSchema.model_validate(user_obj)
+        raise EntityNotFoundException(
+            data={"user_id": user.id},
+            message="user not found",
         )
-
-        return updated_user

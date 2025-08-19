@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field, model_validator, EmailStr
+from pydantic import BaseModel, Field, model_validator, EmailStr, ConfigDict
 
 
 class UserBaseSchema(BaseModel):
@@ -21,6 +21,12 @@ class UserUpdateSchema(BaseModel):
     password: str | None = Field(
         None, min_length=8, description="update user password confirm"
     )
+
+
+class UserReadSchema(UserBaseSchema):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int = Field(description="user unique identifier")
 
 
 class UserProfileDetailSchema(BaseModel):

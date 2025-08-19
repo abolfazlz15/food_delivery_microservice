@@ -1,3 +1,4 @@
+from typing import Any
 from src.common.http_response.error_response import ErrorCodes, ErrorResponse
 
 
@@ -22,4 +23,12 @@ class AppBaseException(Exception):
             status=self.status_code,
             path=path,
             data=self.data,
+        )
+class EntityNotFoundException(AppBaseException):
+    def __init__(self, data: dict[str, Any], message: str = "Entity not found"):
+        super().__init__(
+            code=ErrorCodes.ENTITY_NOT_FOUND,
+            message=message,
+            status_code=404,
+            data=data,
         )

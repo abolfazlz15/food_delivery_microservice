@@ -24,9 +24,10 @@ class UserRepository(UserRepositoryInterface):
         return None
 
     async def update_user(
-        self, user_id: int, user_data: UserUpdateSchema
+        self,
+        user_id: int,
+        user_data: UserUpdateSchema,
     ) -> User | None:
-
         update_data = user_data.model_dump(exclude_unset=True, exclude_none=True)
         if not update_data:
             return await self.get_user_detail_by_id(user_id)
@@ -40,4 +41,5 @@ class UserRepository(UserRepositoryInterface):
         updated_user = result.scalar_one_or_none()
         if updated_user:
             await self.session.commit()
+            await self.session.refresh(updated_user)
         return updated_user
