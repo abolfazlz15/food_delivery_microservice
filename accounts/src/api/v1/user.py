@@ -9,7 +9,6 @@ from src.repository_interface.user_repository_interface import UserRepositoryInt
 from src.schema.user import (
     ChangePasswordInSchema,
     UserFullDataSchema,
-    UserInDBSchema,
     UserReadSchema,
 )
 from src.service.auth import get_current_active_user
@@ -23,13 +22,13 @@ router = APIRouter(
 
 @router.get(
     "/detail/",
-    response_model=UserFullDataSchema,
+    response_model=UserReadSchema,
     status_code=status.HTTP_200_OK,
     name="user:detail",
 )
 async def user_detail_router(
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
-    current_user: UserInDBSchema = Depends(get_current_active_user),
+    current_user: UserFullDataSchema = Depends(get_current_active_user),
 ):
     return UserService(user_repository).user_detail(current_user)
 
@@ -64,7 +63,7 @@ async def change_user_password_router(
     request: Request,
     password_data: ChangePasswordInSchema,
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
-    current_user: UserInDBSchema = Depends(get_current_active_user),
+    current_user: UserFullDataSchema = Depends(get_current_active_user),
 ) -> SuccessResponse[UserReadSchema]:
     user_data = await UserService(user_repository).change_password(
         current_user,

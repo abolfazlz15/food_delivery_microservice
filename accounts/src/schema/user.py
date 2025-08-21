@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, model_validator, EmailStr, ConfigDict
 
+from src.common.enum.user_role import UserRoleEnum
+
 
 class UserBaseSchema(BaseModel):
     fullname: str = Field(max_length=255, description="client full name")
@@ -27,27 +29,19 @@ class UserReadSchema(UserBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(description="user unique identifier")
+    role: UserRoleEnum = Field(description="Role of the user")
+    is_active: bool = Field(description="user status")
+    created_at: datetime = Field(
+        description="date time when user created",
+    )
+    updated_at: datetime | None = Field(
+        default=None,
+        description="when user update last time",
+    )
 
 
-class UserProfileDetailSchema(BaseModel):
-    id: int
-    fullname: str
-    email: str
-
-
-class UserFullDataSchema(UserProfileDetailSchema):
-    is_active: bool
-    created_at: datetime
-    updated_at: datetime | None
-    role: str
-
-
-class UserInDBSchema(UserFullDataSchema):
+class UserFullDataSchema(UserReadSchema):
     password: str
-
-
-class UserUpdateProfileInDBSchema(BaseModel):
-    fullname: str
 
 
 class ChangePasswordInSchema(BaseModel):

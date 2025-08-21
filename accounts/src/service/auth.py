@@ -6,10 +6,11 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.depends import get_user_repository
+from src.repository_interface.user_repository_interface import UserRepositoryInterface
 from src.config.base_config import settings
-from src.config.database import get_db
 from src.repository.user import UserRepository
-from src.schema.user import UserFullDataSchema, UserInDBSchema
+from src.schema.user import UserFullDataSchema, UserReadSchema
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
@@ -19,11 +20,11 @@ async def authenticate_user(
     session: AsyncSession,
     email: str,
     password: str,
-) -> UserInDBSchema | None:
+) -> UserFullDataSchema | None:
     user_dict = await UserRepository(session).get_user_by_email(email=email)
     if not user_dict:
         return None
-    user = UserInDBSchema(
+    user = UserFullDataSchema(
         id=user_dict.id,
         fullname=user_dict.fullname,
         email=user_dict.email,
@@ -45,17 +46,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_password_hash(password: str) -> str:
-    """
-    Hashes a plain password.
-    """
-    return pwd_context.hash(password)
-
-
 async def get_current_user(
-    session: Annotated[AsyncSession, Depends(get_db)],
+    user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
     token: Annotated[str, Depends(oauth2_scheme)],
-) -> UserInDBSchema:
+) -> UserFullDataSchema:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -71,25 +65,25 @@ async def get_current_user(
 
     except (jwt.InvalidTokenError, jwt.ExpiredSignatureError):
         raise credentials_exception
-    user_dict = await UserRepository(session).get_user_detail_by_id(id=int(user_id))
-    user = UserInDBSchema(
-        id=user_dict.id,
-        fullname=user_dict.fullname,
-        email=user_dict.email,
-        is_active=user_dict.is_active,
-        created_at=user_dict.created_at,
-        updated_at=user_dict.updated_at,
-        password=user_dict.password,
-        role=user_dict.role,
+    user_test = await user_repository.get_user_detail_by_id(id=int(user_id))
+    user_test = UserFullDataSchema(
+        id=user_test.id,
+        fullname=user_test.fullname,
+        email=user_test.email,
+        is_active=user_test.is_active,
+        created_at=user_test.created_at,
+        updated_at=user_test.updated_at,
+        password=user_test.password,
+        role=user_test.role,
     )
-    if user is None:
+    if user_test is None:
         raise credentials_exception
-    return user
+    return user_test
 
 
 async def get_current_active_user(
-    current_user: Annotated[UserFullDataSchema, Depends(get_current_user)],
-) -> UserInDBSchema:
+    current_user: Annotated[UserReadSchema, Depends(get_current_user)],
+) -> UserReadSchema:
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
