@@ -22,15 +22,21 @@ router = APIRouter(
 
 @router.get(
     "/detail/",
-    response_model=UserReadSchema,
+    response_model=SuccessResponse[UserReadSchema],
     status_code=status.HTTP_200_OK,
     name="user:detail",
 )
 async def user_detail_router(
+    request: Request,
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
     current_user: UserFullDataSchema = Depends(get_current_active_user),
 ):
-    return UserService(user_repository).user_detail(current_user)
+    user_data = await UserService(user_repository).user_detail(current_user)
+    return SuccessResult[UserReadSchema](
+        message="password change successfully",
+        status_code=status.HTTP_200_OK,
+        data=user_data,
+    ).to_response_model(request=request)
 
 
 # @router.patch(
