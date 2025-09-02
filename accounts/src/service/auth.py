@@ -3,17 +3,16 @@ from typing import Annotated
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.depends import get_user_repository
-from src.repository_interface.user_repository_interface import UserRepositoryInterface
+from src.common.security.password_hash import verify_password
 from src.config.base_config import settings
+from src.depends import get_user_repository
 from src.repository.user import UserRepository
+from src.repository_interface.user_repository_interface import UserRepositoryInterface
 from src.schema.user import UserFullDataSchema, UserReadSchema
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/swagger/login")
 
 
 async def authenticate_user(
@@ -37,13 +36,6 @@ async def authenticate_user(
     if not verify_password(password, user.password):
         return None
     return user
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Verifies if a plain password matches its hashed counterpart.
-    """
-    return pwd_context.verify(plain_password, hashed_password)
 
 
 async def get_current_user(
