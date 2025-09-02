@@ -1,8 +1,9 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field, model_validator, EmailStr, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 from src.common.enum.user_role import UserRoleEnum
+from src.common.exceptions.exceptions import InvalidDataException
 
 
 class UserBaseSchema(BaseModel):
@@ -57,7 +58,11 @@ class ChangePasswordInSchema(BaseModel):
     def validate_passwords(self):
         new_password = self.new_password
         if new_password != self.new_password_confirm:
-            raise ValueError("passwords do not match")
+            raise InvalidDataException(
+                message="passwords do not match",
+            )
         if self.current_password == new_password:
-            raise ValueError("your new password can not be like your current password")
-        return self
+            raise InvalidDataException(
+                message="your new password can not be like your current password",
+            )
+        return self 
