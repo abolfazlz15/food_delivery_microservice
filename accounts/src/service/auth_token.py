@@ -2,18 +2,19 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 import jwt
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config.base_config import settings
-from src.repository.auth_token import AuthTokenRepository
-
-# from src.repository.token_repository import TokenRepository
+from src.repository_interface.auth_token_repository_interface import (
+    AuthTokenRepositoryInterface,
+)
 
 
 class AuthTokenService:
-    @staticmethod
+    def __init__(self, auth_repository: AuthTokenRepositoryInterface) -> None:
+        self.auth_repository = auth_repository
+
     async def create_refresh_token(
-        session: AsyncSession, data: dict, expires_delta: timedelta | None = None
+        self, data: dict, expires_delta: timedelta | None = None
     ) -> str:
         """Generate a refresh token."""
         jti = uuid.uuid4()
@@ -23,7 +24,7 @@ class AuthTokenService:
         encoded_jwt = jwt.encode(
             to_encode, settings.secret_key, algorithm=settings.algorithm
         )
-        await AuthTokenRepository(session).create_token(jti, int(data["sub"]))
+        await self.auth_repository.create_token(jti, int(data["sub"]))
         return encoded_jwt
 
     @staticmethod

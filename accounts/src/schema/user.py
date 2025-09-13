@@ -65,4 +65,4 @@ class ChangePasswordInSchema(BaseModel):
             raise InvalidDataException(
                 message="your new password can not be like your current password",
             )
-        return self 
+        return self

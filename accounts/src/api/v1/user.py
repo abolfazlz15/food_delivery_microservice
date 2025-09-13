@@ -2,16 +2,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, status
 
-from src.common.http_response.success_response import SuccessResponse
 from src.common.http_response.response_handler import SuccessResult
-from src.depends import get_user_repository
+from src.common.http_response.success_response import SuccessResponse
+from src.depends import get_current_active_user, get_user_repository
 from src.repository_interface.user_repository_interface import UserRepositoryInterface
-from src.schema.user import (
-    ChangePasswordInSchema,
-    UserFullDataSchema,
-    UserReadSchema,
-)
-from src.service.auth import get_current_active_user
+from src.schema.user import ChangePasswordInSchema, UserFullDataSchema, UserReadSchema
 from src.service.user import UserService
 
 router = APIRouter(
