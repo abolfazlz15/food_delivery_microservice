@@ -3,14 +3,17 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.common.http_response.response_handler import SuccessResult
 from src.common.http_response.success_response import SuccessResponse
 from src.config.base_config import settings
-from src.config.database import get_db
+from src.depends import get_auth_token_repository, get_user_repository
+from src.repository_interface.auth_token_repository_interface import (
+    AuthTokenRepositoryInterface,
+)
+from src.repository_interface.user_repository_interface import UserRepositoryInterface
 from src.schema.token import TokenSchema
-from src.service.auth import authenticate_user
+from src.service.auth import AuthService
 from src.service.auth_token import AuthTokenService
 
 router = APIRouter(
@@ -26,10 +29,15 @@ router = APIRouter(
 )
 async def swagger_login_router(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: AsyncSession = Depends(get_db),
+    auth_repository: Annotated[
+        AuthTokenRepositoryInterface, Depends(get_auth_token_repository)
+    ],
+    user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
 ) -> TokenSchema:
     """swagger UI login endpoint"""
-    user = await authenticate_user(db, form_data.username, form_data.password)
+    user = await AuthService(user_repository).authenticate_user(
+        form_data.username, form_data.password
+    )
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -41,8 +49,7 @@ async def swagger_login_router(
         data={"sub": str(user.id)},
         expires_delta=timedelta(minutes=settings.access_token_lifetime),
     )
-    refresh_token = await AuthTokenService.create_refresh_token(
-        session=db,
+    refresh_token = await AuthTokenService(auth_repository).create_refresh_token(
         data={"sub": str(user.id), "user_role": user.role.name},
         expires_delta=timedelta(days=settings.refresh_token_lifetime),
     )
@@ -62,9 +69,14 @@ async def swagger_login_router(
 async def login_router(
     request: Request,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: AsyncSession = Depends(get_db),
+    auth_repository: Annotated[
+        AuthTokenRepositoryInterface, Depends(get_auth_token_repository)
+    ],
+    user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
 ) -> SuccessResponse[TokenSchema]:
-    user = await authenticate_user(db, form_data.username, form_data.password)
+    user = await AuthService(user_repository).authenticate_user(
+        form_data.username, form_data.password
+    )
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -76,8 +88,7 @@ async def login_router(
         data={"sub": str(user.id)},
         expires_delta=timedelta(minutes=settings.access_token_lifetime),
     )
-    refresh_token = await AuthTokenService.create_refresh_token(
-        session=db,
+    refresh_token = await AuthTokenService(auth_repository).create_refresh_token(
         data={"sub": str(user.id), "user_role": user.role.name},
         expires_delta=timedelta(days=settings.refresh_token_lifetime),
     )
